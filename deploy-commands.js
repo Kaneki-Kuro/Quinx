@@ -5,7 +5,6 @@ require('dotenv').config();
 const commands = [];
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
-// Load command data
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
   commands.push(command.data.toJSON());
@@ -13,7 +12,6 @@ for (const file of commandFiles) {
 
 const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 
-// Deploy to a single guild (dev mode)
 (async () => {
   try {
     console.log('Started refreshing application (/) commands.');
