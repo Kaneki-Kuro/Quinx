@@ -49,11 +49,9 @@ client.on(Events.InteractionCreate, async interaction => {
     const botAvatar = client.user.displayAvatarURL();
 
     const embed = new EmbedBuilder()
-      .setAuthor({ name: 'Quinx Support', iconURL: botAvatar })
+      .setAuthor({ name: 'Quinx | Support', iconURL: botAvatar })
       .setTitle('🟣 Open a Ticket | Get the Help You Need')
-      .setDescription(
-        `📝 **Need assistance?** Whether it’s support, appeals, reports, or applications — we’re here to help.\n\nClick the dropdown below to open a ticket and our team will get to you shortly.`
-      )
+      .setDescription('Choose one of the option given below to create a ticket')
       .setColor(0x9146ff);
 
     const menu = new StringSelectMenuBuilder()
@@ -99,13 +97,13 @@ client.on(Events.InteractionCreate, async interaction => {
       flags: 64
     });
 
-    // TODO: Add logic to open ticket channel
+    // TODO: Add ticket channel creation logic here
   }
 });
 
 client.login(TOKEN);
 
-// ✅ Optional Express server for Web Service hosting
+// Optional Express web server for Render or UptimeRobot
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
