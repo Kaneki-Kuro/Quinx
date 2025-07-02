@@ -21,10 +21,10 @@ const TOKEN = process.env.TOKEN;
 const CLIENT_ID = process.env.CLIENT_ID;
 const GUILD_ID = process.env.GUILD_ID;
 
+// Register /tickets on startup
 client.once('ready', () => {
   console.log(`✅ Logged in as ${client.user.tag}`);
 
-  // Slash command registration
   const command = new SlashCommandBuilder()
     .setName('tickets')
     .setDescription('Send the ticket panel dropdown.');
@@ -45,63 +45,60 @@ client.once('ready', () => {
   })();
 });
 
+// Handle /tickets and dropdown
 client.on(Events.InteractionCreate, async interaction => {
-  // Slash command logic
-  if (interaction.isChatInputCommand()) {
-    if (interaction.commandName === 'tickets') {
-      const embed = new EmbedBuilder()
-        .setTitle('🎫 Create a Ticket')
-        .setDescription('Please select the reason for your ticket from the dropdown below.')
-        .setColor(0x9146FF);
+  // Slash Command: /tickets
+  if (interaction.isChatInputCommand() && interaction.commandName === 'tickets') {
+    const embed = new EmbedBuilder()
+      .setTitle('🎫 Create a Ticket')
+      .setDescription('Please select the reason for your ticket from the dropdown below.')
+      .setColor(0x9146FF);
 
-      const dropdown = new StringSelectMenuBuilder()
-        .setCustomId('ticket_reason')
-        .setPlaceholder('Select a ticket type...')
-        .addOptions(
-          {
-            label: 'General Support',
-            description: 'Help with anything general.',
-            value: 'general_support'
-          },
-          {
-            label: 'Staff Applications',
-            description: 'Apply to become a staff member.',
-            value: 'staff_app'
-          },
-          {
-            label: 'Report a Staff',
-            description: 'Report a team member.',
-            value: 'report_staff'
-          },
-          {
-            label: 'Punishment Appeal',
-            description: 'Appeal a ban or punishment.',
-            value: 'punishment_appeal'
-          }
-        );
+    const dropdown = new StringSelectMenuBuilder()
+      .setCustomId('ticket_reason')
+      .setPlaceholder('Select a ticket type...')
+      .addOptions(
+        {
+          label: 'General Support',
+          description: 'Help with general inquiries.',
+          value: 'general_support'
+        },
+        {
+          label: 'Staff Applications',
+          description: 'Apply for staff position.',
+          value: 'staff_app'
+        },
+        {
+          label: 'Report a Staff',
+          description: 'Report a team member.',
+          value: 'report_staff'
+        },
+        {
+          label: 'Punishment Appeal',
+          description: 'Appeal a punishment.',
+          value: 'punishment_appeal'
+        }
+      );
 
-      const row = new ActionRowBuilder().addComponents(dropdown);
+    const row = new ActionRowBuilder().addComponents(dropdown);
 
-      await interaction.reply({
-        embeds: [embed],
-        components: [row],
-        ephemeral: false
-      });
-    }
+    await interaction.reply({
+      embeds: [embed],
+      components: [row]
+    });
   }
 
-  // Dropdown selection logic
-  if (interaction.isStringSelectMenu()) {
-    if (interaction.customId === 'ticket_reason') {
-      const selection = interaction.values[0];
+  // Dropdown menu selected
+  if (interaction.isStringSelectMenu() && interaction.customId === 'ticket_reason') {
+    const selection = interaction.values[0];
+    const formatted = selection.replace('_', ' ').replace(/(^|\s)\S/g, l => l.toUpperCase());
 
-      await interaction.reply({
-        content: `✅ You selected: **${selection.replace('_', ' ')}**.\n(You can now implement channel creation logic here.)`,
-        ephemeral: true
-      });
+    await interaction.reply({
+      content: `✅ You selected: **${formatted}**`,
+      flags: 64 // 64 = ephemeral message
+    });
 
-      // TODO: Create ticket channel depending on selection
-    }
+    // TODO: Here you can add logic to create channels based on selection
   }
 });
 
