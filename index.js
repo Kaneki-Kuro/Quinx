@@ -50,8 +50,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
     const embed = new EmbedBuilder()
       .setAuthor({ name: 'Quinx | Support', iconURL: botAvatar })
-      .setTitle('🟣 Open a Ticket | Get the Help You Need')
-      .setDescription('Choose one of the option given below to create a ticket')
+      .setDescription('Click the dropdown below to open a ticket in your catagory')
       .setColor(0x9146ff);
 
     const menu = new StringSelectMenuBuilder()
@@ -103,7 +102,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
 client.login(TOKEN);
 
-// Optional Express web server for Render or UptimeRobot
+// Optional Express server for uptime or Render Web Service
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
