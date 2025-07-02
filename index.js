@@ -12,7 +12,6 @@ const {
 } = require('discord.js');
 require('dotenv').config();
 
-// === DISCORD BOT CONFIG ===
 const TOKEN = process.env.TOKEN;
 const CLIENT_ID = process.env.CLIENT_ID;
 const GUILD_ID = process.env.GUILD_ID;
@@ -22,7 +21,6 @@ const client = new Client({
   partials: [Partials.Channel]
 });
 
-// === REGISTER SLASH COMMAND ===
 client.once('ready', () => {
   console.log(`✅ Logged in as ${client.user.tag}`);
 
@@ -46,13 +44,16 @@ client.once('ready', () => {
   })();
 });
 
-// === HANDLE INTERACTIONS ===
 client.on(Events.InteractionCreate, async interaction => {
-  // /tickets command
   if (interaction.isChatInputCommand() && interaction.commandName === 'tickets') {
+    const botAvatar = client.user.displayAvatarURL();
+
     const embed = new EmbedBuilder()
-      .setTitle('🎫 Create a Ticket')
-      .setDescription('Please select the reason for your ticket below.')
+      .setAuthor({ name: 'Quinx Support', iconURL: botAvatar })
+      .setTitle('🟣 Open a Ticket | Get the Help You Need')
+      .setDescription(
+        `📝 **Need assistance?** Whether it’s support, appeals, reports, or applications — we’re here to help.\n\nClick the dropdown below to open a ticket and our team will get to you shortly.`
+      )
       .setColor(0x9146ff);
 
     const menu = new StringSelectMenuBuilder()
@@ -89,23 +90,22 @@ client.on(Events.InteractionCreate, async interaction => {
     });
   }
 
-  // dropdown selection
   if (interaction.isStringSelectMenu() && interaction.customId === 'ticket_reason') {
     const value = interaction.values[0];
     const readable = value.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
     await interaction.reply({
       content: `✅ You selected: **${readable}**`,
-      flags: 64 // ephemeral message
+      flags: 64
     });
 
-    // TODO: Add ticket channel creation logic here
+    // TODO: Add logic to open ticket channel
   }
 });
 
 client.login(TOKEN);
 
-// === OPTIONAL EXPRESS SERVER FOR UPTIME ===
+// ✅ Optional Express server for Web Service hosting
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
@@ -115,5 +115,5 @@ app.get('/', (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`🌐 Web server is listening on port ${port}`);
+  console.log(`🌐 Web server is running on port ${port}`);
 });
