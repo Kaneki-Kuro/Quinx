@@ -12,60 +12,61 @@ const {
 } = require('discord.js');
 require('dotenv').config();
 
+// === DISCORD BOT CONFIG ===
+const TOKEN = process.env.TOKEN;
+const CLIENT_ID = process.env.CLIENT_ID;
+const GUILD_ID = process.env.GUILD_ID;
+
 const client = new Client({
   intents: [GatewayIntentBits.Guilds],
   partials: [Partials.Channel]
 });
 
-const TOKEN = process.env.TOKEN;
-const CLIENT_ID = process.env.CLIENT_ID;
-const GUILD_ID = process.env.GUILD_ID;
-
-// Register /tickets on startup
+// === REGISTER SLASH COMMAND ===
 client.once('ready', () => {
   console.log(`✅ Logged in as ${client.user.tag}`);
 
   const command = new SlashCommandBuilder()
     .setName('tickets')
-    .setDescription('Send the ticket panel dropdown.');
+    .setDescription('Send the ticket panel with dropdown options.');
 
   const rest = new REST({ version: '10' }).setToken(TOKEN);
 
   (async () => {
     try {
-      console.log('🔁 Registering /tickets...');
+      console.log('📤 Registering /tickets command...');
       await rest.put(
         Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
         { body: [command.toJSON()] }
       );
-      console.log('✅ /tickets registered.');
+      console.log('✅ Command registered.');
     } catch (err) {
-      console.error('❌ Slash command error:', err);
+      console.error('❌ Failed to register command:', err);
     }
   })();
 });
 
-// Handle /tickets and dropdown
+// === HANDLE INTERACTIONS ===
 client.on(Events.InteractionCreate, async interaction => {
-  // Slash Command: /tickets
+  // /tickets command
   if (interaction.isChatInputCommand() && interaction.commandName === 'tickets') {
     const embed = new EmbedBuilder()
       .setTitle('🎫 Create a Ticket')
-      .setDescription('Please select the reason for your ticket from the dropdown below.')
-      .setColor(0x9146FF);
+      .setDescription('Please select the reason for your ticket below.')
+      .setColor(0x9146ff);
 
-    const dropdown = new StringSelectMenuBuilder()
+    const menu = new StringSelectMenuBuilder()
       .setCustomId('ticket_reason')
       .setPlaceholder('Select a ticket type...')
       .addOptions(
         {
           label: 'General Support',
-          description: 'Help with general inquiries.',
+          description: 'Help with general issues.',
           value: 'general_support'
         },
         {
           label: 'Staff Applications',
-          description: 'Apply for staff position.',
+          description: 'Apply for a staff position.',
           value: 'staff_app'
         },
         {
@@ -80,7 +81,7 @@ client.on(Events.InteractionCreate, async interaction => {
         }
       );
 
-    const row = new ActionRowBuilder().addComponents(dropdown);
+    const row = new ActionRowBuilder().addComponents(menu);
 
     await interaction.reply({
       embeds: [embed],
@@ -88,18 +89,31 @@ client.on(Events.InteractionCreate, async interaction => {
     });
   }
 
-  // Dropdown menu selected
+  // dropdown selection
   if (interaction.isStringSelectMenu() && interaction.customId === 'ticket_reason') {
-    const selection = interaction.values[0];
-    const formatted = selection.replace('_', ' ').replace(/(^|\s)\S/g, l => l.toUpperCase());
+    const value = interaction.values[0];
+    const readable = value.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
     await interaction.reply({
-      content: `✅ You selected: **${formatted}**`,
-      flags: 64 // 64 = ephemeral message
+      content: `✅ You selected: **${readable}**`,
+      flags: 64 // ephemeral message
     });
 
-    // TODO: Here you can add logic to create channels based on selection
+    // TODO: Add ticket channel creation logic here
   }
 });
 
 client.login(TOKEN);
+
+// === OPTIONAL EXPRESS SERVER FOR UPTIME ===
+const express = require('express');
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.get('/', (req, res) => {
+  res.send('🤖 Quinx Ticket Bot is running!');
+});
+
+app.listen(port, () => {
+  console.log(`🌐 Web server is listening on port ${port}`);
+});
