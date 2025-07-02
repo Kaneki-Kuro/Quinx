@@ -1,7 +1,6 @@
 {
-  "name": "quinx-ticket-bot",
+  "name": "ticket-bot",
   "version": "1.0.0",
-  "description": "Ticket bot for Quinx",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
