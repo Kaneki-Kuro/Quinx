@@ -117,7 +117,8 @@ client.on(Events.InteractionCreate, async interaction => {
     return await interaction.showModal(modal);
   }
 
-  if (interaction.isModalSubmit()) {
+  if (interaction.isModalSubmit()) {   
+    await interaction.deferReply({ ephemeral: true });
     const formType = interaction.customId.split('_form')[0];
     const config = categoryMap[formType];
     if (!config) return;
