@@ -11,8 +11,7 @@ const {
   TextInputStyle,
   ModalBuilder,
   Events,
-  Partials,
-  PermissionFlagsBits
+  Partials
 } = require('discord.js');
 require('dotenv').config();
 
@@ -185,21 +184,7 @@ client.on(Events.InteractionCreate, async interaction => {
     const channel = await interaction.guild.channels.create({
       name: channelName,
       type: 0,
-      parent: categoryId,
-      permissionOverwrites: [
-        {
-          id: interaction.guild.roles.everyone,
-          deny: [PermissionFlagsBits.ViewChannel]
-        },
-        {
-          id: interaction.user.id,
-          allow: [
-            PermissionFlagsBits.ViewChannel,
-            PermissionFlagsBits.SendMessages,
-            PermissionFlagsBits.ReadMessageHistory
-          ]
-        }
-      ]
+      parent: categoryId
     });
 
     await interaction.reply({
@@ -225,21 +210,7 @@ client.on(Events.InteractionCreate, async interaction => {
     const channel = await interaction.guild.channels.create({
       name: channelName,
       type: 0,
-      parent: categoryId,
-      permissionOverwrites: [
-        {
-          id: interaction.guild.roles.everyone,
-          deny: [PermissionFlagsBits.ViewChannel]
-        },
-        {
-          id: interaction.user.id,
-          allow: [
-            PermissionFlagsBits.ViewChannel,
-            PermissionFlagsBits.SendMessages,
-            PermissionFlagsBits.ReadMessageHistory
-          ]
-        }
-      ]
+      parent: categoryId
     });
 
     await interaction.reply({
