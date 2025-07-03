@@ -25,26 +25,11 @@ const client = new Client({
 });
 
 const categoryMap = {
-  general_support: {
-    id: '1390195522412744768',
-    prefix: 'g.s'
-  },
-  bug_report: {
-    id: '1390201414017355926',
-    prefix: 'b.r'
-  },
-  punishment_appeal: {
-    id: '1390197290051960832',
-    prefix: 'p.a'
-  },
-  staff_app: {
-    id: '1390195994221871114',
-    prefix: 's.a'
-  },
-  report_staff: {
-    id: '1390196998321475644',
-    prefix: 'r.s'
-  }
+  general_support: { id: '1390195522412744768', prefix: 'g.s' },
+  bug_report: { id: '1390201414017355926', prefix: 'b.r' },
+  punishment_appeal: { id: '1390197290051960832', prefix: 'p.a' },
+  staff_app: { id: '1390195994221871114', prefix: 's.a' },
+  report_staff: { id: '1390196998321475644', prefix: 'r.s' }
 };
 
 client.once('ready', () => {
@@ -144,7 +129,7 @@ client.on(Events.InteractionCreate, async interaction => {
         new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('punish_type').setLabel('What punishment did you receive?').setStyle(TextInputStyle.Short).setRequired(true)),
         new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('who').setLabel('Who punished you?').setStyle(TextInputStyle.Short).setRequired(true)),
         new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('reason').setLabel('Why were you punished?').setStyle(TextInputStyle.Short).setRequired(true)),
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('why_remove').setLabel('Why should we remove or reduce the punishment?').setStyle(TextInputStyle.Paragraph).setRequired(true)),
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('why_remove').setLabel('Why remove/reduce the punishment?').setStyle(TextInputStyle.Paragraph).setRequired(true)), // ✅ Fixed label
         new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('honesty').setLabel('Are you being honest in this appeal?').setStyle(TextInputStyle.Short).setRequired(true))
       );
     } else if (value === 'staff_app') {
@@ -189,13 +174,14 @@ client.on(Events.InteractionCreate, async interaction => {
       )
       .setTimestamp();
 
-    await interaction.reply({ content: `✅ Ticket created: ${channel}`, ephemeral: true });
+    await interaction.editReply({ content: `✅ Ticket created: ${channel}` });
     await channel.send({ content: `🎫 <@${interaction.user.id}> opened a ticket.`, embeds: [embed] });
   }
 });
 
 client.login(TOKEN);
 
+// Express Web Server (for uptime)
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
