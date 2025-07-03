@@ -117,8 +117,9 @@ client.on(Events.InteractionCreate, async interaction => {
     return await interaction.showModal(modal);
   }
 
-  if (interaction.isModalSubmit()) {   
+  if (interaction.isModalSubmit()) {
     await interaction.deferReply({ ephemeral: true });
+
     const formType = interaction.customId.split('_form')[0];
     const config = categoryMap[formType];
     if (!config) return;
@@ -134,11 +135,14 @@ client.on(Events.InteractionCreate, async interaction => {
       .setTitle(`📩 ${formType.replace(/_/g, ' ').toUpperCase()} Ticket`)
       .setColor(0x9146ff)
       .addFields(
-        [...fields].map(([key, val]) => ({ name: key.replace(/_/g, ' '), value: val.value }))
+        [...fields].map(([key, val]) => ({
+          name: key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+          value: val.value
+        }))
       )
       .setTimestamp();
 
-    await interaction.reply({ content: `✅ Ticket created: ${channel}`, ephemeral: true });
+    await interaction.editReply({ content: `✅ Ticket created: ${channel}` });
     await channel.send({ content: `🎫 <@${interaction.user.id}> opened a ticket.`, embeds: [embed] });
   }
 });
