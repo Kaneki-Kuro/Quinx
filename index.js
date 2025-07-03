@@ -58,7 +58,7 @@ client.on(Events.InteractionCreate, async interaction => {
         '• Do not open multiple tickets for the same issue.\n' +
         '• Provide clear and detailed information.\n' +
         '• Abuse of the system will result in punishment.\n\n' +
-        '![support gif](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGQzOGZiODRiNGRjYzRiMzkwOWQ1MDMwM2VkZDRhMzUzYmMxZDEzMyZjdD1n/WUlplcMpOCEmTGBtBW/giphy.gif)'
+        '![Ticket GIF](https://cdn.discordapp.com/attachments/1389970577388998888/1390195161362857996/Ticket_GIF_banner.gif?ex=68675fa3&is=68660e23&hm=451bd385cfd5fda278416fdafe7e354d979cdca271fba18d9b1e0555a614cfd7&)'
       )
       .setColor(0x9146ff)
       .setFooter({ text: 'Quinx Support System' })
