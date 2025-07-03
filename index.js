@@ -69,27 +69,33 @@ client.on(Events.InteractionCreate, async interaction => {
       .addOptions(
         {
           label: 'General Support',
-          description: 'Help with general issues.',
+          description: 'Apply for discord or in-game support',
           value: 'general_support',
-          emoji: '🛠️'
+          emoji: { id: '1390200221358751825' }
         },
         {
-          label: 'Staff Applications',
-          description: 'Apply for a staff position.',
-          value: 'staff_app',
-          emoji: '📝'
-        },
-        {
-          label: 'Report a Staff',
-          description: 'Report a team member.',
-          value: 'report_staff',
-          emoji: '🚫'
+          label: 'Bug Report',
+          description: 'Report a bug found in game or discord',
+          value: 'bug_report',
+          emoji: { id: '1390200200039108719' }
         },
         {
           label: 'Punishment Appeal',
-          description: 'Appeal a punishment.',
+          description: 'Appeal a punishment',
           value: 'punishment_appeal',
-          emoji: '📄'
+          emoji: { id: '1390200212248858744' }
+        },
+        {
+          label: 'Staff Application',
+          description: 'Apply for staff position.',
+          value: 'staff_app',
+          emoji: { id: '1390200218485788763' }
+        },
+        {
+          label: 'Report a Staff',
+          description: 'Report a member from staff',
+          value: 'report_staff',
+          emoji: { id: '1390200207987445780' }
         }
       );
 
