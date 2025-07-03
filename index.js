@@ -222,7 +222,7 @@ client.on(Events.InteractionCreate, async interaction => {
       components: [closeBtn]
     });
 
-    channel.ticketOwner = interaction.user;
+    channel.ticketOwnerId = interaction.user.id;
   }
 
   if (interaction.isButton() && interaction.customId === 'close_ticket') {
@@ -239,7 +239,7 @@ client.on(Events.InteractionCreate, async interaction => {
     const fileName = `transcript-${channel.name}.txt`;
     fs.writeFileSync(fileName, transcript);
 
-    const ticketUser = interaction.guild.members.cache.find(m => channel.name.includes(m.user.username));
+    const ticketUser = interaction.guild.members.cache.find(m => channel.name.includes(m.user.username)) || interaction.user;
     const display = ticketUser ? ticketUser.displayName : 'Unknown';
     const username = ticketUser ? ticketUser.user.tag : 'unknown#0000';
 
@@ -249,6 +249,11 @@ client.on(Events.InteractionCreate, async interaction => {
       content: `${display} ( ${username} )'s ${channel.name.split('-')[0]} transcript`,
       files: [attachment]
     });
+
+    await ticketUser.send({
+      content: `Here is a copy of your transcript from the ticket **${channel.name}**`,
+      files: [attachment]
+    }).catch(() => console.log('⚠️ Could not DM user.'));
 
     fs.unlinkSync(fileName);
     await channel.delete();
