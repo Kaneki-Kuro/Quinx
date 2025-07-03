@@ -77,40 +77,40 @@ client.on(Events.InteractionCreate, async interaction => {
 
     if (value === 'general_support') {
       modal.addComponents(
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('ign').setLabel('What is your in-game-name?').setStyle(TextInputStyle.Short).setRequired(true))),
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('section').setLabel('Which gamemode/section is your issue related to?').setStyle(TextInputStyle.Short).setRequired(true))),
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('type').setLabel('What type of issue are you facing?').setStyle(TextInputStyle.Short).setRequired(true))),
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('desc').setLabel('Brief description').setStyle(TextInputStyle.Paragraph).setRequired(true)))
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('ign').setLabel('What is your in-game-name?').setStyle(TextInputStyle.Short).setRequired(true)),
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('section').setLabel('Which gamemode/section is your issue related to?').setStyle(TextInputStyle.Short).setRequired(true)),
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('type').setLabel('What type of issue are you facing?').setStyle(TextInputStyle.Short).setRequired(true)),
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('desc').setLabel('Brief description').setStyle(TextInputStyle.Paragraph).setRequired(true))
       );
     } else if (value === 'bug_report') {
       modal.addComponents(
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('platform').setLabel('Which platform is the bug on?').setStyle(TextInputStyle.Short).setRequired(true))),
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('gamemode').setLabel('Which section/gamemode is affected?').setStyle(TextInputStyle.Short).setRequired(true))),
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('bugdesc').setLabel('Brief Description of the Bug').setStyle(TextInputStyle.Paragraph).setRequired(true)))
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('platform').setLabel('Which platform is the bug on?').setStyle(TextInputStyle.Short).setRequired(true)),
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('gamemode').setLabel('Which section/gamemode is affected?').setStyle(TextInputStyle.Short).setRequired(true)),
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('bugdesc').setLabel('Brief Description of the Bug').setStyle(TextInputStyle.Paragraph).setRequired(true))
       );
     } else if (value === 'punishment_appeal') {
       modal.addComponents(
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('punish_type').setLabel('What punishment did you receive?').setStyle(TextInputStyle.Short).setRequired(true))),
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('who').setLabel('Who punished you?').setStyle(TextInputStyle.Short).setRequired(true))),
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('reason').setLabel('Why were you punished?').setStyle(TextInputStyle.Short).setRequired(true))),
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('why_remove').setLabel('Why should we remove or reduce the punishment?').setStyle(TextInputStyle.Paragraph).setRequired(true))),
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('honesty').setLabel('Are you being honest in this appeal?').setStyle(TextInputStyle.Short).setRequired(true)))
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('punish_type').setLabel('What punishment did you receive?').setStyle(TextInputStyle.Short).setRequired(true)),
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('who').setLabel('Who punished you?').setStyle(TextInputStyle.Short).setRequired(true)),
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('reason').setLabel('Why were you punished?').setStyle(TextInputStyle.Short).setRequired(true)),
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('why_remove').setLabel('Why should we remove or reduce the punishment?').setStyle(TextInputStyle.Paragraph).setRequired(true)),
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('honesty').setLabel('Are you being honest in this appeal?').setStyle(TextInputStyle.Short).setRequired(true))
       );
     } else if (value === 'staff_app') {
       modal.addComponents(
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('username').setLabel('What is your in-game username?').setStyle(TextInputStyle.Short).setRequired(true))),
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('timezone').setLabel('What is your time zone/region?').setStyle(TextInputStyle.Short).setRequired(true))),
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('age').setLabel('How old are you?').setStyle(TextInputStyle.Short).setRequired(true))),
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('punishments').setLabel('Have you been previously punished on Quinx?').setStyle(TextInputStyle.Short).setRequired(true))),
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('strengths').setLabel('What are your personal strengths?').setStyle(TextInputStyle.Paragraph).setRequired(true)))
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('username').setLabel('What is your in-game username?').setStyle(TextInputStyle.Short).setRequired(true)),
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('timezone').setLabel('What is your time zone/region?').setStyle(TextInputStyle.Short).setRequired(true)),
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('age').setLabel('How old are you?').setStyle(TextInputStyle.Short).setRequired(true)),
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('punishments').setLabel('Have you been previously punished on Quinx?').setStyle(TextInputStyle.Short).setRequired(true)),
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('strengths').setLabel('What are your personal strengths?').setStyle(TextInputStyle.Paragraph).setRequired(true))
       );
     } else if (value === 'report_staff') {
       modal.addComponents(
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('reported').setLabel('Which staff member are you reporting?').setStyle(TextInputStyle.Short).setRequired(true))),
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('wrongdoing').setLabel('What did the staff member do wrong?').setStyle(TextInputStyle.Short).setRequired(true))),
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('incident_time').setLabel('When did this incident occur? (Date & Time)').setStyle(TextInputStyle.Short).setRequired(true))),
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('location').setLabel('Where did it happen?').setStyle(TextInputStyle.Short).setRequired(true))),
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('proof').setLabel('Do you have any proof?').setStyle(TextInputStyle.Paragraph).setRequired(true)))
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('reported').setLabel('Which staff member are you reporting?').setStyle(TextInputStyle.Short).setRequired(true)),
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('wrongdoing').setLabel('What did the staff member do wrong?').setStyle(TextInputStyle.Short).setRequired(true)),
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('incident_time').setLabel('When did this incident occur? (Date & Time)').setStyle(TextInputStyle.Short).setRequired(true)),
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('location').setLabel('Where did it happen?').setStyle(TextInputStyle.Short).setRequired(true)),
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('proof').setLabel('Do you have any proof?').setStyle(TextInputStyle.Paragraph).setRequired(true))
       );
     }
 
