@@ -79,10 +79,7 @@ client.on(Events.InteractionCreate, async interaction => {
         { label: 'Report a Staff', value: 'report_staff', emoji: '<:rs:1390200207987445780>', description: 'Report a member from staff' }
       );
 
-    await interaction.reply({
-      ephemeral: true,
-      content: '✅ Ticket panel sent!'
-    });
+    await interaction.reply({ ephemeral: true, content: '✅ Ticket panel sent!' });
 
     const row = new ActionRowBuilder().addComponents(menu);
     await interaction.channel.send({ embeds: [embed], components: [row] });
@@ -146,7 +143,21 @@ client.on(Events.InteractionCreate, async interaction => {
     const channel = await interaction.guild.channels.create({
       name: `${config.prefix}-${Math.floor(Math.random() * 9000) + 1000}`,
       type: 0,
-      parent: config.id
+      parent: config.id,
+      permissionOverwrites: [
+        {
+          id: interaction.guild.roles.everyone,
+          deny: ['ViewChannel']
+        },
+        {
+          id: interaction.user.id,
+          allow: ['ViewChannel', 'SendMessages', 'AttachFiles', 'EmbedLinks']
+        },
+        {
+          id: '1389488347126435942', // support role
+          allow: ['ViewChannel', 'SendMessages', 'ManageMessages']
+        }
+      ]
     });
 
     const fields = interaction.fields.fields;
