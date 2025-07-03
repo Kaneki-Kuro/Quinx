@@ -32,6 +32,35 @@ const categoryMap = {
   report_staff: { id: '1390196998321475644', prefix: 'r.s' }
 };
 
+const fieldLabels = {
+  ign: 'What is your in-game-name?',
+  section: 'Which gamemode or section is it about?',
+  type: 'What type of issue are you facing?',
+  desc: 'Brief description',
+
+  platform: 'Which platform is the bug on?',
+  gamemode: 'Which section/gamemode is affected?',
+  bugdesc: 'Brief description of the bug',
+
+  punish_type: 'What punishment did you receive?',
+  who: 'Who punished you?',
+  reason: 'Why were you punished?',
+  why_remove: 'Why reduce or remove the punishment?',
+  honesty: 'Are you being honest in this appeal?',
+
+  username: 'What is your in-game username?',
+  timezone: 'What is your time zone/region?',
+  age: 'How old are you?',
+  punishments: 'Have you been previously punished on Quinx?',
+  strengths: 'What are your personal strengths?',
+
+  reported: 'Which staff member are you reporting?',
+  wrongdoing: 'What did the staff member do?',
+  incident_time: 'When did it happen? (Date & Time)',
+  location: 'Where did it happen?',
+  proof: 'Do you have any proof?'
+};
+
 client.once('ready', () => {
   console.log(`✅ Logged in as ${client.user.tag}`);
 
@@ -122,7 +151,7 @@ client.on(Events.InteractionCreate, async interaction => {
       modal.addComponents(
         new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('platform').setLabel('Which platform is the bug on?').setStyle(TextInputStyle.Short).setRequired(true)),
         new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('gamemode').setLabel('Which section/gamemode is affected?').setStyle(TextInputStyle.Short).setRequired(true)),
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('bugdesc').setLabel('Brief Description of the Bug').setStyle(TextInputStyle.Paragraph).setRequired(true))
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('bugdesc').setLabel('Brief description of the bug').setStyle(TextInputStyle.Paragraph).setRequired(true))
       );
     } else if (value === 'punishment_appeal') {
       modal.addComponents(
@@ -170,7 +199,10 @@ client.on(Events.InteractionCreate, async interaction => {
       .setTitle(`📩 ${formType.replace(/_/g, ' ').toUpperCase()} Ticket`)
       .setColor(0x9146ff)
       .addFields(
-        [...fields].map(([key, val]) => ({ name: key.replace(/_/g, ' '), value: val.value }))
+        [...fields].map(([key, val]) => ({
+          name: fieldLabels[key] || key.replace(/_/g, ' '),
+          value: `\`\`\`${val.value}\`\`\``
+        }))
       )
       .setTimestamp();
 
@@ -181,7 +213,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
 client.login(TOKEN);
 
-// Express web server for uptime
+// Express web server (for hosting uptime)
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
