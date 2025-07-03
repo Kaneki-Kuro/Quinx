@@ -71,172 +71,72 @@ client.once('ready', () => {
 });
 
 client.on(Events.InteractionCreate, async interaction => {
-  if (interaction.isChatInputCommand() && interaction.commandName === 'tickets') {
-    const botAvatar = client.user.displayAvatarURL();
-
-    const embed = new EmbedBuilder()
-      .setAuthor({ name: 'Quinx | Support', iconURL: botAvatar })
-      .setDescription(
-        '**Click the dropdown below to open a ticket in your category.**\n\n' +
-        '__**Please follow these rules:**__\n' +
-        '• Be respectful to staff and others.\n' +
-        '• Do not open multiple tickets for the same issue.\n' +
-        '• Provide clear and detailed information.\n' +
-        '• Abuse of the system will result in punishment.'
-      )
-      .setColor(0x9146ff)
-      .setFooter({ text: 'Quinx Support System' })
-      .setTimestamp()
-      .setImage('https://cdn.discordapp.com/attachments/1389970577388998888/1390195161362857996/Ticket_GIF_banner.gif');
-
-    const menu = new StringSelectMenuBuilder()
-      .setCustomId('ticket_reason')
-      .setPlaceholder('Select a ticket type...')
-      .addOptions(
-        {
-          label: 'General Support',
-          description: 'Apply for discord or in-game support',
-          value: 'general_support',
-          emoji: { id: '1390200221358751825' }
-        },
-        {
-          label: 'Bug Report',
-          description: 'Report a bug found in game or discord',
-          value: 'bug_report',
-          emoji: { id: '1390200200039108719' }
-        },
-        {
-          label: 'Punishment Appeal',
-          description: 'Appeal a punishment',
-          value: 'punishment_appeal',
-          emoji: { id: '1390200212248858744' }
-        },
-        {
-          label: 'Staff Application',
-          description: 'Apply for staff position.',
-          value: 'staff_app',
-          emoji: { id: '1390200218485788763' }
-        },
-        {
-          label: 'Report a Staff',
-          description: 'Report a member from staff',
-          value: 'report_staff',
-          emoji: { id: '1390200207987445780' }
-        }
-      );
-
-    const row = new ActionRowBuilder().addComponents(menu);
-
-    await interaction.reply({
-      embeds: [embed],
-      components: [row]
-    });
-  }
-
   if (interaction.isStringSelectMenu() && interaction.customId === 'ticket_reason') {
     const value = interaction.values[0];
 
-    if (value === 'general_support') {
+    if (value === 'staff_app') {
       const modal = new ModalBuilder()
-        .setCustomId('general_support_form')
-        .setTitle('📝 General Support Form');
+        .setCustomId('staff_app_form')
+        .setTitle('📋 Staff Application');
 
-      const row1 = new ActionRowBuilder().addComponents(
-        new TextInputBuilder()
-          .setCustomId('ign')
-          .setLabel('What is your in-game name?')
-          .setStyle(TextInputStyle.Short)
-          .setRequired(true)
+      modal.addComponents(
+        new ActionRowBuilder().addComponents(
+          new TextInputBuilder().setCustomId('username').setLabel('What is your in-game username?').setStyle(TextInputStyle.Short).setRequired(true)
+        ),
+        new ActionRowBuilder().addComponents(
+          new TextInputBuilder().setCustomId('timezone').setLabel('What is your time zone/region?').setStyle(TextInputStyle.Short).setRequired(true)
+        ),
+        new ActionRowBuilder().addComponents(
+          new TextInputBuilder().setCustomId('age').setLabel('How old are you?').setStyle(TextInputStyle.Short).setRequired(true)
+        ),
+        new ActionRowBuilder().addComponents(
+          new TextInputBuilder().setCustomId('punishments').setLabel('Have you been previously punished on Quinx?').setStyle(TextInputStyle.Short).setRequired(true)
+        ),
+        new ActionRowBuilder().addComponents(
+          new TextInputBuilder().setCustomId('strengths').setLabel('What are your personal strengths?').setStyle(TextInputStyle.Paragraph).setRequired(true)
+        )
       );
 
-      const row2 = new ActionRowBuilder().addComponents(
-        new TextInputBuilder()
-          .setCustomId('section')
-          .setLabel('Which gamemode or section?')
-          .setStyle(TextInputStyle.Short)
-          .setRequired(true)
-      );
-
-      const row3 = new ActionRowBuilder().addComponents(
-        new TextInputBuilder()
-          .setCustomId('issue_type')
-          .setLabel('What type of issue are you facing?')
-          .setStyle(TextInputStyle.Short)
-          .setRequired(true)
-      );
-
-      const row4 = new ActionRowBuilder().addComponents(
-        new TextInputBuilder()
-          .setCustomId('description')
-          .setLabel('Brief description')
-          .setStyle(TextInputStyle.Paragraph)
-          .setRequired(true)
-      );
-
-      modal.addComponents(row1, row2, row3, row4);
       return await interaction.showModal(modal);
     }
 
-    if (value === 'bug_report') {
+    if (value === 'report_staff') {
       const modal = new ModalBuilder()
-        .setCustomId('bug_report_form')
-        .setTitle('🐞 Bug Report Form');
+        .setCustomId('report_staff_form')
+        .setTitle('🚨 Report a Staff Member');
 
-      const row1 = new ActionRowBuilder().addComponents(
-        new TextInputBuilder()
-          .setCustomId('bug_platform')
-          .setLabel('Which platform is the bug on?')
-          .setStyle(TextInputStyle.Short)
-          .setRequired(true)
+      modal.addComponents(
+        new ActionRowBuilder().addComponents(
+          new TextInputBuilder().setCustomId('staff_reported').setLabel('Which staff member are you reporting?').setStyle(TextInputStyle.Short).setRequired(true)
+        ),
+        new ActionRowBuilder().addComponents(
+          new TextInputBuilder().setCustomId('wrongdoing').setLabel('What did the staff member do wrong?').setStyle(TextInputStyle.Short).setRequired(true)
+        ),
+        new ActionRowBuilder().addComponents(
+          new TextInputBuilder().setCustomId('time').setLabel('When did this incident occur? (Date & Time)').setStyle(TextInputStyle.Short).setRequired(true)
+        ),
+        new ActionRowBuilder().addComponents(
+          new TextInputBuilder().setCustomId('location').setLabel('Where did it happen?').setStyle(TextInputStyle.Short).setRequired(true)
+        ),
+        new ActionRowBuilder().addComponents(
+          new TextInputBuilder().setCustomId('proof').setLabel('Do you have any proof?').setStyle(TextInputStyle.Paragraph).setRequired(true)
+        )
       );
 
-      const row2 = new ActionRowBuilder().addComponents(
-        new TextInputBuilder()
-          .setCustomId('bug_section')
-          .setLabel('Which section/gamemode is affected?')
-          .setStyle(TextInputStyle.Short)
-          .setRequired(true)
-      );
-
-      const row3 = new ActionRowBuilder().addComponents(
-        new TextInputBuilder()
-          .setCustomId('bug_description')
-          .setLabel('Brief Description of the Bug')
-          .setStyle(TextInputStyle.Paragraph)
-          .setRequired(true)
-      );
-
-      modal.addComponents(row1, row2, row3);
       return await interaction.showModal(modal);
     }
-
-    const { id: categoryId, prefix } = categoryMap[value];
-    const random = Math.floor(Math.random() * 9000) + 1000;
-    const channelName = `${prefix}-${random}`;
-
-    const channel = await interaction.guild.channels.create({
-      name: channelName,
-      type: 0,
-      parent: categoryId
-    });
-
-    await interaction.reply({
-      content: `✅ Ticket created: ${channel}`,
-      ephemeral: true
-    });
-
-    await channel.send({
-      content: `🎫 <@${interaction.user.id}>, thank you for creating a ticket. Our team will be with you shortly!`
-    });
   }
 
-  if (interaction.isModalSubmit() && interaction.customId === 'general_support_form') {
-    const ign = interaction.fields.getTextInputValue('ign');
-    const section = interaction.fields.getTextInputValue('section');
-    const issueType = interaction.fields.getTextInputValue('issue_type');
-    const description = interaction.fields.getTextInputValue('description');
+  if (interaction.isModalSubmit() && interaction.customId === 'staff_app_form') {
+    const answers = [
+      { name: 'In-game Username', value: interaction.fields.getTextInputValue('username') },
+      { name: 'Time Zone / Region', value: interaction.fields.getTextInputValue('timezone') },
+      { name: 'Age', value: interaction.fields.getTextInputValue('age') },
+      { name: 'Previous Punishments', value: interaction.fields.getTextInputValue('punishments') },
+      { name: 'Strengths', value: interaction.fields.getTextInputValue('strengths') }
+    ];
 
-    const { id: categoryId, prefix } = categoryMap['general_support'];
+    const { id: categoryId, prefix } = categoryMap['staff_app'];
     const random = Math.floor(Math.random() * 9000) + 1000;
     const channelName = `${prefix}-${random}`;
 
@@ -252,33 +152,50 @@ client.on(Events.InteractionCreate, async interaction => {
     });
 
     await channel.send({
-      content: `🎫 <@${interaction.user.id}> has opened a **General Support** ticket.`,
+      content: `🎫 <@${interaction.user.id}> has opened a **Staff Application** ticket.`,
       embeds: [
         new EmbedBuilder()
-          .setTitle('📝 General Support Form')
-          .addFields(
-            { name: 'In-game Name', value: ign },
-            { name: 'Gamemode / Section', value: section },
-            { name: 'Issue Type', value: issueType },
-            { name: 'Description', value: description }
-          )
+          .setTitle('📋 Staff Application Form')
+          .addFields(...answers)
           .setColor(0x9146ff)
           .setTimestamp()
       ]
     });
   }
-});
 
-client.login(TOKEN);
+  if (interaction.isModalSubmit() && interaction.customId === 'report_staff_form') {
+    const answers = [
+      { name: 'Reported Staff Member', value: interaction.fields.getTextInputValue('staff_reported') },
+      { name: 'What They Did', value: interaction.fields.getTextInputValue('wrongdoing') },
+      { name: 'Time of Incident', value: interaction.fields.getTextInputValue('time') },
+      { name: 'Location', value: interaction.fields.getTextInputValue('location') },
+      { name: 'Proof', value: interaction.fields.getTextInputValue('proof') }
+    ];
 
-const express = require('express');
-const app = express();
-const port = process.env.PORT || 3000;
+    const { id: categoryId, prefix } = categoryMap['report_staff'];
+    const random = Math.floor(Math.random() * 9000) + 1000;
+    const channelName = `${prefix}-${random}`;
 
-app.get('/', (req, res) => {
-  res.send('🤖 Quinx Ticket Bot is running!');
-});
+    const channel = await interaction.guild.channels.create({
+      name: channelName,
+      type: 0,
+      parent: categoryId
+    });
 
-app.listen(port, () => {
-  console.log(`🌐 Web server is running on port ${port}`);
+    await interaction.reply({
+      content: `✅ Ticket created: ${channel}`,
+      ephemeral: true
+    });
+
+    await channel.send({
+      content: `🎫 <@${interaction.user.id}> has reported a **Staff Member**.`,
+      embeds: [
+        new EmbedBuilder()
+          .setTitle('🚨 Staff Report Form')
+          .addFields(...answers)
+          .setColor(0xff4444)
+          .setTimestamp()
+      ]
+    });
+  }
 });
