@@ -8,7 +8,8 @@ const {
   ActionRowBuilder,
   StringSelectMenuBuilder,
   Events,
-  Partials
+  Partials,
+  PermissionFlagsBits
 } = require('discord.js');
 require('dotenv').config();
 
@@ -17,9 +18,32 @@ const CLIENT_ID = process.env.CLIENT_ID;
 const GUILD_ID = process.env.GUILD_ID;
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
   partials: [Partials.Channel]
 });
+
+const categoryMap = {
+  general_support: {
+    id: '1390195522412744768',
+    prefix: 'g.s'
+  },
+  bug_report: {
+    id: '1390201414017355926',
+    prefix: 'b.r'
+  },
+  punishment_appeal: {
+    id: '1390197290051960832',
+    prefix: 'p.a'
+  },
+  staff_app: {
+    id: '1390195994221871114',
+    prefix: 's.a'
+  },
+  report_staff: {
+    id: '1390196998321475644',
+    prefix: 'r.s'
+  }
+};
 
 client.once('ready', () => {
   console.log(`✅ Logged in as ${client.user.tag}`);
@@ -109,20 +133,45 @@ client.on(Events.InteractionCreate, async interaction => {
 
   if (interaction.isStringSelectMenu() && interaction.customId === 'ticket_reason') {
     const value = interaction.values[0];
-    const readable = value.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    const { id: categoryId, prefix } = categoryMap[value];
+    const random = Math.floor(Math.random() * 9000) + 1000;
+    const channelName = `${prefix}-${random}`;
 
-    await interaction.reply({
-      content: `✅ You selected: **${readable}**`,
-      flags: 64 // Ephemeral
+    // Create ticket channel in category
+    const channel = await interaction.guild.channels.create({
+      name: channelName,
+      type: 0, // GUILD_TEXT
+      parent: categoryId,
+      permissionOverwrites: [
+        {
+          id: interaction.guild.roles.everyone,
+          deny: [PermissionFlagsBits.ViewChannel]
+        },
+        {
+          id: interaction.user.id,
+          allow: [
+            PermissionFlagsBits.ViewChannel,
+            PermissionFlagsBits.SendMessages,
+            PermissionFlagsBits.ReadMessageHistory
+          ]
+        }
+      ]
     });
 
-    // TODO: Add ticket channel creation logic here
+    await interaction.reply({
+      content: `✅ Ticket created: ${channel}`,
+      ephemeral: true
+    });
+
+    await channel.send({
+      content: `🎫 <@${interaction.user.id}>, thank you for creating a ticket. Our team will be with you shortly!`
+    });
   }
 });
 
 client.login(TOKEN);
 
-// Optional Express server for uptime or Render Web Service
+// Optional Express server
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
