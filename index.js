@@ -149,13 +149,13 @@ client.on(Events.InteractionCreate, async interaction => {
           .setRequired(true)
       );
 
-const row2 = new ActionRowBuilder().addComponents(
-  new TextInputBuilder()
-    .setCustomId('section')
-    .setLabel('Which gamemode or section?')
-    .setStyle(TextInputStyle.Short)
-    .setRequired(true)
-);
+      const row2 = new ActionRowBuilder().addComponents(
+        new TextInputBuilder()
+          .setCustomId('section')
+          .setLabel('Which gamemode or section?')
+          .setStyle(TextInputStyle.Short)
+          .setRequired(true)
+      );
 
       const row3 = new ActionRowBuilder().addComponents(
         new TextInputBuilder()
@@ -174,6 +174,39 @@ const row2 = new ActionRowBuilder().addComponents(
       );
 
       modal.addComponents(row1, row2, row3, row4);
+      return await interaction.showModal(modal);
+    }
+
+    if (value === 'bug_report') {
+      const modal = new ModalBuilder()
+        .setCustomId('bug_report_form')
+        .setTitle('🐞 Bug Report Form');
+
+      const row1 = new ActionRowBuilder().addComponents(
+        new TextInputBuilder()
+          .setCustomId('bug_platform')
+          .setLabel('Which platform is the bug on?')
+          .setStyle(TextInputStyle.Short)
+          .setRequired(true)
+      );
+
+      const row2 = new ActionRowBuilder().addComponents(
+        new TextInputBuilder()
+          .setCustomId('bug_section')
+          .setLabel('Which section/gamemode is affected?')
+          .setStyle(TextInputStyle.Short)
+          .setRequired(true)
+      );
+
+      const row3 = new ActionRowBuilder().addComponents(
+        new TextInputBuilder()
+          .setCustomId('bug_description')
+          .setLabel('Brief Description of the Bug')
+          .setStyle(TextInputStyle.Paragraph)
+          .setRequired(true)
+      );
+
+      modal.addComponents(row1, row2, row3);
       return await interaction.showModal(modal);
     }
 
