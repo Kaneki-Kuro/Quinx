@@ -149,13 +149,13 @@ client.on(Events.InteractionCreate, async interaction => {
           .setRequired(true)
       );
 
-      const row2 = new ActionRowBuilder().addComponents(
-        new TextInputBuilder()
-          .setCustomId('section')
-          .setLabel('Which gamemode or section is your issue related to?')
-          .setStyle(TextInputStyle.Short)
-          .setRequired(true)
-      );
+const row2 = new ActionRowBuilder().addComponents(
+  new TextInputBuilder()
+    .setCustomId('section')
+    .setLabel('Which gamemode or section?')
+    .setStyle(TextInputStyle.Short)
+    .setRequired(true)
+);
 
       const row3 = new ActionRowBuilder().addComponents(
         new TextInputBuilder()
