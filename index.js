@@ -78,7 +78,7 @@ client.on(Events.InteractionCreate, async interaction => {
     if (value === 'general_support') {
       modal.addComponents(
         new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('ign').setLabel('What is your in-game-name?').setStyle(TextInputStyle.Short).setRequired(true)),
-        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('section').setLabel('Which gamemode/section is your issue related to?').setStyle(TextInputStyle.Short).setRequired(true)),
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('section').setLabel('Which gamemode or section is your issue related to?').setStyle(TextInputStyle.Short).setRequired(true)),
         new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('type').setLabel('What type of issue are you facing?').setStyle(TextInputStyle.Short).setRequired(true)),
         new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('desc').setLabel('Brief description').setStyle(TextInputStyle.Paragraph).setRequired(true))
       );
@@ -119,7 +119,6 @@ client.on(Events.InteractionCreate, async interaction => {
 
   if (interaction.isModalSubmit()) {
     await interaction.deferReply({ ephemeral: true });
-
     const formType = interaction.customId.split('_form')[0];
     const config = categoryMap[formType];
     if (!config) return;
@@ -135,14 +134,11 @@ client.on(Events.InteractionCreate, async interaction => {
       .setTitle(`📩 ${formType.replace(/_/g, ' ').toUpperCase()} Ticket`)
       .setColor(0x9146ff)
       .addFields(
-        [...fields].map(([key, val]) => ({
-          name: key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-          value: val.value
-        }))
+        [...fields].map(([key, val]) => ({ name: key.replace(/_/g, ' '), value: val.value }))
       )
       .setTimestamp();
 
-    await interaction.editReply({ content: `✅ Ticket created: ${channel}` });
+    await interaction.reply({ content: `✅ Ticket created: ${channel}`, ephemeral: true });
     await channel.send({ content: `🎫 <@${interaction.user.id}> opened a ticket.`, embeds: [embed] });
   }
 });
