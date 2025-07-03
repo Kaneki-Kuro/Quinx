@@ -7,6 +7,9 @@ const {
   EmbedBuilder,
   ActionRowBuilder,
   StringSelectMenuBuilder,
+  TextInputBuilder,
+  TextInputStyle,
+  ModalBuilder,
   Events,
   Partials,
   PermissionFlagsBits
@@ -85,7 +88,7 @@ client.on(Events.InteractionCreate, async interaction => {
       .setColor(0x9146ff)
       .setFooter({ text: 'Quinx Support System' })
       .setTimestamp()
-      .setImage('https://cdn.discordapp.com/attachments/1389970577388998888/1390195161362857996/Ticket_GIF_banner.gif?ex=68675fa3&is=68660e23&hm=451bd385cfd5fda278416fdafe7e354d979cdca271fba18d9b1e0555a614cfd7&');
+      .setImage('https://cdn.discordapp.com/attachments/1389970577388998888/1390195161362857996/Ticket_GIF_banner.gif');
 
     const menu = new StringSelectMenuBuilder()
       .setCustomId('ticket_reason')
@@ -133,14 +136,55 @@ client.on(Events.InteractionCreate, async interaction => {
 
   if (interaction.isStringSelectMenu() && interaction.customId === 'ticket_reason') {
     const value = interaction.values[0];
+
+    if (value === 'general_support') {
+      const modal = new ModalBuilder()
+        .setCustomId('general_support_form')
+        .setTitle('📝 General Support Form');
+
+      const row1 = new ActionRowBuilder().addComponents(
+        new TextInputBuilder()
+          .setCustomId('ign')
+          .setLabel('What is your in-game name?')
+          .setStyle(TextInputStyle.Short)
+          .setRequired(true)
+      );
+
+      const row2 = new ActionRowBuilder().addComponents(
+        new TextInputBuilder()
+          .setCustomId('section')
+          .setLabel('Which gamemode or section is your issue related to?')
+          .setStyle(TextInputStyle.Short)
+          .setRequired(true)
+      );
+
+      const row3 = new ActionRowBuilder().addComponents(
+        new TextInputBuilder()
+          .setCustomId('issue_type')
+          .setLabel('What type of issue are you facing?')
+          .setStyle(TextInputStyle.Short)
+          .setRequired(true)
+      );
+
+      const row4 = new ActionRowBuilder().addComponents(
+        new TextInputBuilder()
+          .setCustomId('description')
+          .setLabel('Brief description')
+          .setStyle(TextInputStyle.Paragraph)
+          .setRequired(true)
+      );
+
+      modal.addComponents(row1, row2, row3, row4);
+      return await interaction.showModal(modal);
+    }
+
     const { id: categoryId, prefix } = categoryMap[value];
     const random = Math.floor(Math.random() * 9000) + 1000;
     const channelName = `${prefix}-${random}`;
 
-    // Create ticket channel in category
     const channel = await interaction.guild.channels.create({
       name: channelName,
-      type: 0, // GUILD_TEXT
+      type: 0,
       parent: categoryId,
       permissionOverwrites: [
         {
@@ -167,11 +211,62 @@ client.on(Events.InteractionCreate, async interaction => {
       content: `🎫 <@${interaction.user.id}>, thank you for creating a ticket. Our team will be with you shortly!`
     });
   }
+
+  if (interaction.isModalSubmit() && interaction.customId === 'general_support_form') {
+    const ign = interaction.fields.getTextInputValue('ign');
+    const section = interaction.fields.getTextInputValue('section');
+    const issueType = interaction.fields.getTextInputValue('issue_type');
+    const description = interaction.fields.getTextInputValue('description');
+
+    const { id: categoryId, prefix } = categoryMap['general_support'];
+    const random = Math.floor(Math.random() * 9000) + 1000;
+    const channelName = `${prefix}-${random}`;
+
+    const channel = await interaction.guild.channels.create({
+      name: channelName,
+      type: 0,
+      parent: categoryId,
+      permissionOverwrites: [
+        {
+          id: interaction.guild.roles.everyone,
+          deny: [PermissionFlagsBits.ViewChannel]
+        },
+        {
+          id: interaction.user.id,
+          allow: [
+            PermissionFlagsBits.ViewChannel,
+            PermissionFlagsBits.SendMessages,
+            PermissionFlagsBits.ReadMessageHistory
+          ]
+        }
+      ]
+    });
+
+    await interaction.reply({
+      content: `✅ Ticket created: ${channel}`,
+      ephemeral: true
+    });
+
+    await channel.send({
+      content: `🎫 <@${interaction.user.id}> has opened a **General Support** ticket.`,
+      embeds: [
+        new EmbedBuilder()
+          .setTitle('📝 General Support Form')
+          .addFields(
+            { name: 'In-game Name', value: ign },
+            { name: 'Gamemode / Section', value: section },
+            { name: 'Issue Type', value: issueType },
+            { name: 'Description', value: description }
+          )
+          .setColor(0x9146ff)
+          .setTimestamp()
+      ]
+    });
+  }
 });
 
 client.login(TOKEN);
 
-// Optional Express server
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
