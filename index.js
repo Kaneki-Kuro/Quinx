@@ -23,41 +23,21 @@ const TOKEN = process.env.TOKEN;
 const CLIENT_ID = process.env.CLIENT_ID;
 const GUILD_ID = process.env.GUILD_ID;
 const TRANSCRIPT_CHANNEL_ID = '1390264064105513030';
-const PING_ROLE_ID = '1389488347126435942';
 
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent
-  ],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
   partials: [Partials.Channel]
 });
 
 const categoryMap = {
-  general_support: {
-    id: '1390195522412744768',
-    prefix: 'g.s'
-  },
-  bug_report: {
-    id: '1390201414017355926',
-    prefix: 'b.r'
-  },
-  punishment_appeal: {
-    id: '1390197290051960832',
-    prefix: 'p.a'
-  },
-  staff_app: {
-    id: '1390195994221871114',
-    prefix: 's.a'
-  },
-  report_staff: {
-    id: '1390196998321475644',
-    prefix: 'r.s'
-  }
+  general_support: { id: '1390195522412744768', prefix: 'g.s' },
+  bug_report: { id: '1390201414017355926', prefix: 'b.r' },
+  punishment_appeal: { id: '1390197290051960832', prefix: 'p.a' },
+  staff_app: { id: '1390195994221871114', prefix: 's.a' },
+  report_staff: { id: '1390196998321475644', prefix: 'r.s' }
 };
 
-client.once('ready', async () => {
+client.once('ready', () => {
   console.log(`✅ Logged in as ${client.user.tag}`);
 
   const command = new SlashCommandBuilder()
@@ -66,16 +46,18 @@ client.once('ready', async () => {
 
   const rest = new REST({ version: '10' }).setToken(TOKEN);
 
-  try {
-    console.log('📤 Registering /tickets command...');
-    await rest.put(
-      Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
-      { body: [command.toJSON()] }
-    );
-    console.log('✅ Command registered.');
-  } catch (err) {
-    console.error('❌ Failed to register command:', err);
-  }
+  (async () => {
+    try {
+      console.log('📤 Registering /tickets command...');
+      await rest.put(
+        Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
+        { body: [command.toJSON()] }
+      );
+      console.log('✅ Command registered.');
+    } catch (err) {
+      console.error('❌ Failed to register command:', err);
+    }
+  })();
 });
 
 client.on(Events.InteractionCreate, async interaction => {
@@ -84,8 +66,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
     const embed = new EmbedBuilder()
       .setAuthor({ name: 'Quinx | Support', iconURL: botAvatar })
-      .setDescription(`**Click the dropdown below to open a ticket in your category.**\n\n__**Please follow these rules:**__\n• Be respectful to staff and others.\n• Do not open multiple tickets for the same issue.\n• Provide clear and detailed information.\n• Abuse of the system will result in punishment.`)
-      .setImage('https://cdn.discordapp.com/attachments/1389970577388998888/1390195161362857996/Ticket_GIF_banner.gif')
+      .setDescription(`**Click the dropdown below to open a ticket in your category.**\n\n__**Please follow these rules:**__\n• Be respectful to staff and others.\n• Do not open multiple tickets for the same issue.\n• Provide clear and detailed information.\n• Abuse of the system will result in punishment.\n\n![ ](https://cdn.discordapp.com/attachments/1389970577388998888/1390195161362857996/Ticket_GIF_banner.gif)`)  
       .setColor(0x9146ff);
 
     const menu = new StringSelectMenuBuilder()
@@ -134,50 +115,14 @@ client.on(Events.InteractionCreate, async interaction => {
     const value = interaction.values[0];
     const modal = new ModalBuilder().setCustomId(`${value}_form`).setTitle(`Ticket Form: ${value.replace(/_/g, ' ')}`);
 
-    const fields = {
-      general_support: [
-        { id: 'ign', label: 'What is your in-game-name?' },
-        { id: 'section', label: 'Which section is your issue related to?' },
-        { id: 'type', label: 'What type of issue are you facing?' },
-        { id: 'desc', label: 'Brief description of your issue' }
-      ],
-      bug_report: [
-        { id: 'platform', label: 'Which platform is the bug on?' },
-        { id: 'gamemode', label: 'Which section/gamemode is affected?' },
-        { id: 'bugdesc', label: 'Brief Description of the Bug' }
-      ],
-      punishment_appeal: [
-        { id: 'punish_type', label: 'What punishment did you receive?' },
-        { id: 'who', label: 'Who punished you?' },
-        { id: 'reason', label: 'Why were you punished?' },
-        { id: 'why_remove', label: 'Why should we remove or reduce the punishment?' },
-        { id: 'honesty', label: 'Are you being honest in this appeal?' }
-      ],
-      staff_app: [
-        { id: 'username', label: 'What is your in-game username?' },
-        { id: 'timezone', label: 'What is your time zone/region?' },
-        { id: 'age', label: 'How old are you?' },
-        { id: 'punishments', label: 'Have you been previously punished on Quinx?' },
-        { id: 'strengths', label: 'What are your personal strengths?' }
-      ],
-      report_staff: [
-        { id: 'reported', label: 'Which staff member are you reporting?' },
-        { id: 'wrongdoing', label: 'What did the staff member do wrong?' },
-        { id: 'incident_time', label: 'When did this incident occur? (Date & Time)' },
-        { id: 'location', label: 'Where did it happen?' },
-        { id: 'proof', label: 'Do you have any proof?' }
-      ]
-    };
+    const short = (id, label) => new TextInputBuilder().setCustomId(id).setLabel(label).setStyle(TextInputStyle.Short).setRequired(true);
+    const long = (id, label) => new TextInputBuilder().setCustomId(id).setLabel(label).setStyle(TextInputStyle.Paragraph).setRequired(true);
 
-    for (const field of fields[value]) {
+    if (value === 'bug_report') {
       modal.addComponents(
-        new ActionRowBuilder().addComponents(
-          new TextInputBuilder()
-            .setCustomId(field.id)
-            .setLabel(field.label.slice(0, 45))
-            .setStyle(field.label.length > 45 ? TextInputStyle.Paragraph : TextInputStyle.Short)
-            .setRequired(true)
-        )
+        new ActionRowBuilder().addComponents(short('platform', 'Which platform is the bug on?')),
+        new ActionRowBuilder().addComponents(short('gamemode', 'Which gamemode or section is affected?')),
+        new ActionRowBuilder().addComponents(long('bugdesc', 'Describe the bug in detail.'))
       );
     }
 
@@ -185,7 +130,7 @@ client.on(Events.InteractionCreate, async interaction => {
   }
 
   if (interaction.isModalSubmit()) {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: 64 });
     const formType = interaction.customId.split('_form')[0];
     const config = categoryMap[formType];
     if (!config) return;
@@ -202,30 +147,39 @@ client.on(Events.InteractionCreate, async interaction => {
       .setColor(0x9146ff)
       .addFields(
         [...fields].map(([key, val]) => ({
-          name: key.replace(/_/g, ' ').toUpperCase(),
-          value: `\`${val.value}\``
+          name: val.label,
+          value: `\`\`${val.value}\`\``
         }))
       )
       .setTimestamp();
 
-    const closeBtn = new ActionRowBuilder().addComponents(
-      new ButtonBuilder()
-        .setCustomId('close_ticket')
-        .setLabel('Close Ticket')
-        .setStyle(ButtonStyle.Danger)
-    );
-
-    await interaction.editReply({ content: `✅ Ticket created: ${channel}`, ephemeral: true });
-    await channel.send({
-      content: `<@${interaction.user.id}> <@&${PING_ROLE_ID}> opened a ticket.`,
-      embeds: [embed],
-      components: [closeBtn]
-    });
-
-    channel.ticketOwnerId = interaction.user.id;
+    await interaction.editReply({ content: `✅ Ticket created: ${channel}` });
+    await channel.send({ content: `<@${interaction.user.id}> <@&1389488347126435942> opened a ticket.`, embeds: [embed], components: [
+      new ActionRowBuilder().addComponents(
+        new ButtonBuilder().setCustomId('close_ticket').setLabel('Close Ticket').setStyle(ButtonStyle.Danger)
+      )
+    ] });
   }
 
   if (interaction.isButton() && interaction.customId === 'close_ticket') {
+    const confirmEmbed = new EmbedBuilder()
+      .setTitle('Are you sure you want to close this ticket?')
+      .setColor(0xffcc00);
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder().setCustomId('confirm_close').setLabel('Yes').setStyle(ButtonStyle.Danger),
+      new ButtonBuilder().setCustomId('cancel_close').setLabel('No').setStyle(ButtonStyle.Secondary)
+    );
+
+    await interaction.reply({ embeds: [confirmEmbed], components: [row], flags: 64 });
+  }
+
+  if (interaction.isButton() && interaction.customId === 'cancel_close') {
+    await interaction.message.delete();
+    await interaction.reply({ content: '❌ Ticket close canceled.', flags: 64 });
+  }
+
+  if (interaction.isButton() && interaction.customId === 'confirm_close') {
     const channel = interaction.channel;
     const messages = await channel.messages.fetch({ limit: 100 });
     const sorted = messages.sort((a, b) => a.createdTimestamp - b.createdTimestamp);
@@ -239,9 +193,10 @@ client.on(Events.InteractionCreate, async interaction => {
     const fileName = `transcript-${channel.name}.txt`;
     fs.writeFileSync(fileName, transcript);
 
-    const ticketUser = interaction.guild.members.cache.find(m => channel.name.includes(m.user.username)) || interaction.user;
-    const display = ticketUser ? ticketUser.displayName : 'Unknown';
-    const username = ticketUser ? ticketUser.user.tag : 'unknown#0000';
+    const member = interaction.guild.members.cache.find(m => channel.name.includes(m.user.username));
+    const ticketUser = member?.user || interaction.user;
+    const display = member?.displayName || ticketUser.username;
+    const username = ticketUser.tag;
 
     const attachment = new AttachmentBuilder(fileName);
     const logChannel = await client.channels.fetch(TRANSCRIPT_CHANNEL_ID);
@@ -265,5 +220,11 @@ client.login(TOKEN);
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
-app.get('/', (req, res) => res.send('🤖 Quinx Ticket Bot is running!'));
-app.listen(port, () => console.log(`🌐 Web server is running on port ${port}`));
+
+app.get('/', (req, res) => {
+  res.send('🤖 Quinx Ticket Bot is running!');
+});
+
+app.listen(port, () => {
+  console.log(`🌐 Web server is running on port ${port}`);
+});
