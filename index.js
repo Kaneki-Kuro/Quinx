@@ -177,7 +177,11 @@ client.on(Events.InteractionCreate, async interaction => {
     const messages = await channel.messages.fetch({ limit: 100 });
     const sorted = messages.sort((a, b) => a.createdTimestamp - b.createdTimestamp);
 
-    const transcript = sorted.map(msg =>
+    const transcript = sorted.map(msg => {
+  const author = msg.author?.tag || 'Unknown';
+  const content = msg.content?.trim() || '[No message content]';
+  return `[${new Date(msg.createdTimestamp).toLocaleString()}] ${author}: ${content}`;
+}).join('\n');
       `[${new Date(msg.createdTimestamp).toLocaleString()}] ${msg.author.tag}: ${msg.content}`
     ).join('\n');
 
