@@ -50,8 +50,19 @@ client.on(Events.InteractionCreate, async interaction => {
 
     const embed = new EmbedBuilder()
       .setAuthor({ name: 'Quinx | Support', iconURL: botAvatar })
-      .setDescription('Click the dropdown below to open a ticket in your catagory')
-      .setColor(0x9146ff);
+      .setTitle('🟣 Need Help? Open a Ticket!')
+      .setDescription(
+        '**Click the dropdown below to open a ticket in your category.**\n\n' +
+        '__**Please follow these rules:**__\n' +
+        '• Be respectful to staff and others.\n' +
+        '• Do not open multiple tickets for the same issue.\n' +
+        '• Provide clear and detailed information.\n' +
+        '• Abuse of the system will result in punishment.\n\n' +
+        '![support gif](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGQzOGZiODRiNGRjYzRiMzkwOWQ1MDMwM2VkZDRhMzUzYmMxZDEzMyZjdD1n/WUlplcMpOCEmTGBtBW/giphy.gif)'
+      )
+      .setColor(0x9146ff)
+      .setFooter({ text: 'Quinx Support System' })
+      .setTimestamp();
 
     const menu = new StringSelectMenuBuilder()
       .setCustomId('ticket_reason')
@@ -60,22 +71,26 @@ client.on(Events.InteractionCreate, async interaction => {
         {
           label: 'General Support',
           description: 'Help with general issues.',
-          value: 'general_support'
+          value: 'general_support',
+          emoji: '🛠️'
         },
         {
           label: 'Staff Applications',
           description: 'Apply for a staff position.',
-          value: 'staff_app'
+          value: 'staff_app',
+          emoji: '📝'
         },
         {
           label: 'Report a Staff',
           description: 'Report a team member.',
-          value: 'report_staff'
+          value: 'report_staff',
+          emoji: '🚫'
         },
         {
           label: 'Punishment Appeal',
           description: 'Appeal a punishment.',
-          value: 'punishment_appeal'
+          value: 'punishment_appeal',
+          emoji: '📄'
         }
       );
 
@@ -93,7 +108,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
     await interaction.reply({
       content: `✅ You selected: **${readable}**`,
-      flags: 64
+      flags: 64 // Ephemeral
     });
 
     // TODO: Add ticket channel creation logic here
