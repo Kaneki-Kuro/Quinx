@@ -71,6 +71,58 @@ client.once('ready', () => {
 });
 
 client.on(Events.InteractionCreate, async interaction => {
+  if (interaction.isChatInputCommand() && interaction.commandName === 'tickets') {
+    const botAvatar = client.user.displayAvatarURL();
+
+    const embed = new EmbedBuilder()
+      .setAuthor({ name: 'Quinx | Support', iconURL: botAvatar })
+      .setDescription(`**Click the dropdown below to open a ticket in your category.**\n\n__**Please follow these rules:**__\n• Be respectful to staff and others.\n• Do not open multiple tickets for the same issue.\n• Provide clear and detailed information.\n• Abuse of the system will result in punishment.\n\n![Banner](https://cdn.discordapp.com/attachments/1389970577388998888/1390195161362857996/Ticket_GIF_banner.gif?ex=68675fa3&is=68660e23&hm=451bd385cfd5fda278416fdafe7e354d979cdca271fba18d9b1e0555a614cfd7&)`)
+      .setColor(0x9146ff);
+
+    const menu = new StringSelectMenuBuilder()
+      .setCustomId('ticket_reason')
+      .setPlaceholder('Select a ticket type...')
+      .addOptions(
+        {
+          label: 'General Support',
+          description: 'Apply for discord or in-game support',
+          value: 'general_support',
+          emoji: '<:general:1390200221358751825>'
+        },
+        {
+          label: 'Bug Report',
+          description: 'Report a bug found in game or discord',
+          value: 'bug_report',
+          emoji: '<:bug:1390200200039108719>'
+        },
+        {
+          label: 'Punishment Appeal',
+          description: 'Appeal a punishment',
+          value: 'punishment_appeal',
+          emoji: '<:punish:1390200212248858744>'
+        },
+        {
+          label: 'Staff Application',
+          description: 'Apply for staff position.',
+          value: 'staff_app',
+          emoji: '<:staff:1390200218485788763>'
+        },
+        {
+          label: 'Report a Staff',
+          description: 'Report a member from staff',
+          value: 'report_staff',
+          emoji: '<:report:1390200207987445780>'
+        }
+      );
+
+    const row = new ActionRowBuilder().addComponents(menu);
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row]
+    });
+  }
+
   if (interaction.isStringSelectMenu() && interaction.customId === 'ticket_reason') {
     const value = interaction.values[0];
     const modal = new ModalBuilder().setCustomId(`${value}_form`).setTitle(`Ticket Form: ${value.replace(/_/g, ' ')}`);
