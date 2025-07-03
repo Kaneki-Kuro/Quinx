@@ -52,9 +52,8 @@ client.once('ready', async () => {
 
   const rest = new REST({ version: '10' }).setToken(TOKEN);
   try {
-    console.log('📤 Registering /tickets command...');
     await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), { body: [command.toJSON()] });
-    console.log('✅ Command registered.');
+    console.log('✅ /tickets command registered');
   } catch (err) {
     console.error('❌ Failed to register command:', err);
   }
@@ -80,7 +79,6 @@ client.on(Events.InteractionCreate, async interaction => {
       );
 
     await interaction.reply({ ephemeral: true, content: '✅ Ticket panel sent!' });
-
     const row = new ActionRowBuilder().addComponents(menu);
     await interaction.channel.send({ embeds: [embed], components: [row] });
   }
@@ -145,18 +143,9 @@ client.on(Events.InteractionCreate, async interaction => {
       type: 0,
       parent: config.id,
       permissionOverwrites: [
-        {
-          id: interaction.guild.roles.everyone,
-          deny: ['ViewChannel']
-        },
-        {
-          id: interaction.user.id,
-          allow: ['ViewChannel', 'SendMessages', 'AttachFiles', 'EmbedLinks']
-        },
-        {
-          id: '1389488347126435942', // support role
-          allow: ['ViewChannel', 'SendMessages', 'ManageMessages']
-        }
+        { id: interaction.guild.roles.everyone, deny: ['ViewChannel'] },
+        { id: interaction.user.id, allow: ['ViewChannel', 'SendMessages', 'AttachFiles', 'EmbedLinks'] },
+        { id: '1389488347126435942', allow: ['ViewChannel', 'SendMessages', 'ManageMessages'] }
       ]
     });
 
@@ -164,10 +153,7 @@ client.on(Events.InteractionCreate, async interaction => {
     const embed = new EmbedBuilder()
       .setTitle(`📩 ${formType.replace(/_/g, ' ').toUpperCase()} Ticket`)
       .setColor(0x9146ff)
-      .addFields([...fields].map(([key, val]) => ({
-        name: key.replace(/_/g, ' '),
-        value: `\`\`\`${val.value}\`\`\``
-      })))
+      .addFields([...fields].map(([key, val]) => ({ name: key.replace(/_/g, ' '), value: `\`\`\`${val.value}\`\`\`` })))
       .setTimestamp();
 
     const closeBtn = new ActionRowBuilder().addComponents(
@@ -199,11 +185,19 @@ client.on(Events.InteractionCreate, async interaction => {
     const firstMsg = sorted.find(m => m.content.includes('<@') && m.content.includes('opened a ticket.'));
     const userId = firstMsg?.mentions?.users?.first()?.id;
     const member = await interaction.guild.members.fetch(userId).catch(() => null);
+    const user = await client.users.fetch(userId).catch(() => null);
 
     const displayName = member?.displayName || 'Unknown';
     const username = member?.user?.tag || 'Unknown#0000';
     const prefix = channel.name.split('-')[0];
     const category = typeMap[prefix] || 'Unknown';
+
+    const ticketID = channel.name.split('-')[1] || '000';
+    const openedAt = new Date(firstMsg?.createdTimestamp || Date.now());
+    const closedAt = new Date();
+
+    const openedBy = `<@${userId || 'Unknown'}>`;
+    const closedBy = `<@${interaction.user.id}>`;
 
     const logChannel = await interaction.guild.channels.fetch('1390264064105513030');
     if (logChannel) {
@@ -213,6 +207,27 @@ client.on(Events.InteractionCreate, async interaction => {
       });
     }
 
+    if (user) {
+      const dmEmbed = new EmbedBuilder()
+        .setTitle('📁 Ticket Closed')
+        .setColor(0xff4444)
+        .addFields(
+          { name: '🆔 Ticket ID', value: ticketID, inline: true },
+          { name: '✅ Opened By', value: openedBy, inline: true },
+          { name: '⛔ Closed By', value: closedBy, inline: true },
+          { name: '📂 Category', value: category, inline: true },
+          { name: '⏰ Open Time', value: openedAt.toLocaleString(), inline: true },
+          { name: '⏱️ Closed At', value: closedAt.toLocaleString(), inline: true }
+        )
+        .setTimestamp();
+
+      try {
+        await user.send({ embeds: [dmEmbed], files: [file] });
+      } catch (err) {
+        console.warn(`❌ Couldn't DM user ${user.tag}`);
+      }
+    }
+
     await interaction.reply({ content: '🗑️ Ticket will be deleted in 5 seconds...', ephemeral: true });
     setTimeout(() => channel.delete().catch(() => {}), 5000);
   }
@@ -220,6 +235,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
 client.login(TOKEN);
 
+// Web UI
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
