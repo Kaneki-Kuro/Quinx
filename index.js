@@ -144,7 +144,6 @@ client.on(Events.InteractionCreate, async interaction => {
 
 client.login(TOKEN);
 
-// Optional Express server for uptime or Render Web Service
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
@@ -155,16 +154,4 @@ app.get('/', (req, res) => {
 
 app.listen(port, () => {
   console.log(`🌐 Web server is running on port ${port}`);
-});
-
-// Additional Express server block (for compatibility or alternative endpoint)
-const app2 = express();
-const altPort = process.env.PORT || 4000;
-
-app2.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-
-app2.listen(altPort, () => {
-  console.log(`Example app listening on port ${altPort}`);
 });
