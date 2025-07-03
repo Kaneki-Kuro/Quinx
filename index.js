@@ -91,7 +91,7 @@ client.on(Events.InteractionCreate, async interaction => {
     const embed = new EmbedBuilder()
       .setAuthor({ name: 'Quinx | Support', iconURL: botAvatar })
       .setDescription(`**Click the dropdown below to open a ticket in your category.**\n\n__**Please follow these rules:**__\n• Be respectful to staff and others.\n• Do not open multiple tickets for the same issue.\n• Provide clear and detailed information.\n• Abuse of the system will result in punishment.`)
-      .setImage('https://cdn.discordapp.com/attachments/1389970577388998888/1390195161362857996/Ticket_GIF_banner.gif?ex=68675fa3&is=68660e23&hm=451bd385cfd5fda278416fdafe7e354d979cdca271fba18d9b1e0555a614cfd7')
+      .setImage('https://cdn.discordapp.com/attachments/1389970577388998888/1390195161362857996/Ticket_GIF_banner.gif')
       .setColor(0x9146ff);
 
     const menu = new StringSelectMenuBuilder()
@@ -207,13 +207,17 @@ client.on(Events.InteractionCreate, async interaction => {
       .setTimestamp();
 
     await interaction.editReply({ content: `✅ Ticket created: ${channel}` });
-    await channel.send({ content: `🎫 <@${interaction.user.id}> opened a ticket.`, embeds: [embed] });
+
+    await channel.send({
+      content: `🎫 <@${interaction.user.id}> <@&1390262517812564078> opened a ticket.`,
+      embeds: [embed]
+    });
   }
 });
 
 client.login(TOKEN);
 
-// Express web server (for hosting uptime)
+// Uptime express server
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
